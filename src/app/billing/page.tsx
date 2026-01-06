@@ -2,13 +2,14 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, Plus, Minus, CheckCircle, Share2, ArrowLeft } from 'lucide-react';
+import { Search, Plus, Minus, CheckCircle, Share2, ArrowLeft, FileText } from 'lucide-react';
 import styles from './page.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import { Input } from '@/components/ui/Input';
 import { supabase } from '@/lib/supabase';
 import { getPlanConfig } from '@/lib/plans';
+import { generateInvoicePDF } from '@/lib/pdfGenerator';
 
 // Types
 interface Product {
@@ -54,6 +55,7 @@ function BillingContent() {
     const [currentUsage, setCurrentUsage] = useState(0);
     const [planLimit, setPlanLimit] = useState<number | 'UNLIMITED'>('UNLIMITED');
     const [featureFlags, setFeatureFlags] = useState<any>(null);
+    const [lastBill, setLastBill] = useState<any>(null);
 
     const handleAddNewProduct = async () => {
         if (!newProductName || !newProductPrice) return;
@@ -218,6 +220,7 @@ function BillingContent() {
                 if (newUsage >= planLimit) setIsLimitReached(true);
             }
 
+            setLastBill(bill);
             setShowPayment(false);
             setShowSuccess(true);
         } catch (error) {
@@ -238,7 +241,37 @@ function BillingContent() {
             setCart({});
             setShowSuccess(false);
             setCustomerPhone('');
+            setLastBill(null);
         }
+    };
+
+    const handleDownloadPDF = () => {
+        if (!lastBill || !shop) return;
+
+        // Reconstruct items with details
+        const billItems = Object.entries(cart).map(([id, qty]) => {
+            const product = products.find(p => p.id === id);
+            return {
+                name: product?.name || 'Unknown Item',
+                quantity: qty,
+                price: product?.price || 0,
+                total: (product?.price || 0) * qty
+            };
+        });
+
+        generateInvoicePDF({
+            invoiceNo: lastBill.id.slice(0, 8).toUpperCase(),
+            date: new Date(lastBill.created_at).toLocaleDateString('en-IN'),
+            customerName: '',
+            customerPhone: lastBill.customer_phone,
+            items: billItems,
+            totalAmount: lastBill.total_amount,
+            paymentMode: lastBill.payment_mode
+        }, {
+            name: shop.name,
+            address: shop.address,
+            phone: user?.phone || ''
+        });
     };
 
     if (showSuccess) {
@@ -260,6 +293,13 @@ function BillingContent() {
                             <Share2 size={20} /> Share on WhatsApp
                         </button>
                     )}
+
+                    <button
+                        onClick={handleDownloadPDF}
+                        style={{ marginTop: '0.5rem', width: '100%', padding: '0.75rem', background: 'white', border: '1px solid #D1D5DB', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, color: '#374151', fontSize: '1rem' }}
+                    >
+                        <FileText size={20} /> Download PDF
+                    </button>
 
                     <button onClick={finish} className={styles.primaryBtn}>
                         {isOnboarding ? 'Go to Dashboard' : 'New Bill'}
