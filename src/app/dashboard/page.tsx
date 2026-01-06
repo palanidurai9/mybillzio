@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, TrendingUp, AlertTriangle, Users, Clock, Crown } from 'lucide-react';
 import styles from './page.module.css';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
@@ -19,11 +19,16 @@ export default function DashboardPage() {
     const [topDebtor, setTopDebtor] = useState<{ phone: string, amount: number } | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEvening, setIsEvening] = useState(false);
+    const [greeting, setGreeting] = useState('');
 
     useEffect(() => {
-        // Check if evening (after 6 PM)
+        // Time logic
         const hour = new Date().getHours();
         setIsEvening(hour >= 18);
+
+        if (hour < 12) setGreeting('Good Morning ☀️');
+        else if (hour < 17) setGreeting('Good Afternoon 🌤️');
+        else setGreeting('Good Evening 🌙');
 
         const fetchDashboardData = async () => {
             try {
@@ -48,7 +53,7 @@ export default function DashboardPage() {
                 setShopName(shop.name);
                 setShopCategory(shop.category || 'retail');
 
-                // 2. Fetch Today's Sales with Breakdown
+                // 2. Fetch Today's Sales with Breakdown (Resets Daily)
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const todayISO = today.toISOString();
@@ -140,8 +145,11 @@ export default function DashboardPage() {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div>
+                    <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>{greeting}</p>
                     <h1 className={styles.shopName}>{shopName}</h1>
-                    <p className={styles.date}>{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                    <p className={styles.date}>
+                        {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+                    </p>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button
@@ -182,35 +190,65 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            {/* Daily Summary - Evening Only */}
-            {isEvening && (
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={styles.dailySummary}
-                    style={{
-                        background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
-                        color: 'white',
-                        padding: '1.25rem',
-                        borderRadius: '16px',
-                        marginBottom: '1.5rem',
-                        boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.5)'
-                    }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <Clock size={20} color="white" />
-                        <h2 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>Today's Sales Breakdown</h2>
-                    </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>₹{todaySales}</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.9rem', opacity: 0.9 }}>
-                        <span>Cash: <b>₹{todayBreakdown.cash}</b></span>
-                        <span>|</span>
-                        <span>UPI: <b>₹{todayBreakdown.upi}</b></span>
-                        <span>|</span>
-                        <span>Credit: <b>₹{todayBreakdown.credit}</b> pending</span>
-                    </div>
-                </motion.div>
-            )}
+            {/* Daily Summary - Conditional Display */}
+            <AnimatePresence>
+                {/* Scenario 1: Fresh Start (No Sales Yet) */}
+                {todaySales === 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={styles.dailySummary}
+                        style={{
+                            background: '#F0F9FF',
+                            border: '1px solid #BAE6FD',
+                            color: '#0284C7',
+                            padding: '1rem',
+                            borderRadius: '16px',
+                            marginBottom: '1.5rem',
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ background: 'white', padding: '8px', borderRadius: '50%' }}>
+                                <Clock size={20} color="#0284C7" />
+                            </div>
+                            <div>
+                                <h3 style={{ fontWeight: 600, fontSize: '1rem' }}>Fresh Start</h3>
+                                <p style={{ fontSize: '0.875rem', opacity: 0.9 }}>Dashboard has been reset for today.</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* Scenario 2: Evening Summary */}
+                {isEvening && todaySales > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={styles.dailySummary}
+                        style={{
+                            background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+                            color: 'white',
+                            padding: '1.25rem',
+                            borderRadius: '16px',
+                            marginBottom: '1.5rem',
+                            boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.5)'
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            <Clock size={20} color="white" />
+                            <h2 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>Today's Sales Breakdown</h2>
+                        </div>
+                        <div style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>₹{todaySales}</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.9rem', opacity: 0.9 }}>
+                            <span>Cash: <b>₹{todayBreakdown.cash}</b></span>
+                            <span>|</span>
+                            <span>UPI: <b>₹{todayBreakdown.upi}</b></span>
+                            <span>|</span>
+                            <span>Credit: <b>₹{todayBreakdown.credit}</b></span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Nudges Section */}
             <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
