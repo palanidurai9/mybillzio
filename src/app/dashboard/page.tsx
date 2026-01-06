@@ -2,21 +2,29 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, TrendingUp, AlertTriangle, Users } from 'lucide-react';
+import { Plus, TrendingUp, AlertTriangle, Users, Clock, Crown } from 'lucide-react';
 import styles from './page.module.css';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
 
 export default function DashboardPage() {
     const router = useRouter();
     const [shopName, setShopName] = useState('My Billzio Shop');
     const [shopCategory, setShopCategory] = useState('retail');
     const [todaySales, setTodaySales] = useState(0);
+    const [todayBreakdown, setTodayBreakdown] = useState({ cash: 0, upi: 0, credit: 0 });
     const [pendingCredit, setPendingCredit] = useState(0);
     const [lowStockCount, setLowStockCount] = useState(0);
+    const [topDebtor, setTopDebtor] = useState<{ phone: string, amount: number } | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isEvening, setIsEvening] = useState(false);
 
     useEffect(() => {
+        // Check if evening (after 6 PM)
+        const hour = new Date().getHours();
+        setIsEvening(hour >= 18);
+
         const fetchDashboardData = async () => {
             try {
                 // 1. Check Auth & Get Shop
@@ -40,35 +48,71 @@ export default function DashboardPage() {
                 setShopName(shop.name);
                 setShopCategory(shop.category || 'retail');
 
-                // 2. Fetch Today's Sales
-                // Set start of today (UTC) - This is a simple approximation. For strict timezones, use date-fns.
+                // 2. Fetch Today's Sales with Breakdown
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const todayISO = today.toISOString();
 
                 const { data: todaysBills } = await supabase
                     .from('bills')
-                    .select('total_amount')
+                    .select('total_amount, payment_mode')
                     .eq('shop_id', shop.id)
                     .gte('created_at', todayISO);
 
-                const sales = todaysBills?.reduce((sum, bill) => sum + Number(bill.total_amount), 0) || 0;
-                setTodaySales(sales);
+                let sales = 0;
+                let cash = 0;
+                let upi = 0;
+                let creditToday = 0;
 
-                // 3. Fetch Total Pending Credit
+                todaysBills?.forEach(bill => {
+                    const amount = Number(bill.total_amount);
+                    sales += amount;
+                    if (bill.payment_mode === 'cash') cash += amount;
+                    else if (bill.payment_mode === 'upi') upi += amount;
+                    else if (bill.payment_mode === 'credit') creditToday += amount;
+                });
+
+                setTodaySales(sales);
+                setTodayBreakdown({ cash, upi, credit: creditToday });
+
+                // 3. Fetch Total Pending Credit & Top Debtor
                 const { data: creditBills } = await supabase
                     .from('bills')
-                    .select('total_amount')
+                    .select('total_amount, customer_phone')
                     .eq('shop_id', shop.id)
                     .eq('payment_mode', 'credit');
 
-                const credit = creditBills?.reduce((sum, bill) => sum + Number(bill.total_amount), 0) || 0;
-                setPendingCredit(credit);
+                const creditTotal = creditBills?.reduce((sum, bill) => sum + Number(bill.total_amount), 0) || 0;
+                setPendingCredit(creditTotal);
+
+                // Find top debtor
+                if (creditBills && creditBills.length > 0) {
+                    const debtMap: Record<string, number> = {};
+                    creditBills.forEach(bill => {
+                        const phone = bill.customer_phone;
+                        if (phone) {
+                            debtMap[phone] = (debtMap[phone] || 0) + Number(bill.total_amount);
+                        }
+                    });
+
+                    let maxDebt = 0;
+                    let maxDebtor = '';
+                    Object.entries(debtMap).forEach(([phone, amount]) => {
+                        if (amount > maxDebt) {
+                            maxDebt = amount;
+                            maxDebtor = phone;
+                        }
+                    });
+
+                    if (maxDebtor) {
+                        setTopDebtor({ phone: maxDebtor, amount: maxDebt });
+                    }
+                }
 
                 // 4. Fetch Low Stock Count
                 const { count } = await supabase
                     .from('products')
-                    .select('*', { count: 'exact', head: true }) // head: true only returns count
+                    .select('*', { count: 'exact', head: true })
                     .eq('shop_id', shop.id)
                     .lt('stock', 10);
 
@@ -99,25 +143,98 @@ export default function DashboardPage() {
                     <h1 className={styles.shopName}>{shopName}</h1>
                     <p className={styles.date}>{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                 </div>
-                <div
-                    onClick={() => router.push('/profile')}
-                    style={{
-                        width: 40,
-                        height: 40,
-                        background: '#E5E7EB',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer'
-                    }}
-                >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" color="#374151">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                        onClick={() => router.push('/pricing')}
+                        style={{
+                            padding: '0.5rem',
+                            background: '#FEF3C7',
+                            color: '#D97706',
+                            border: 'none',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <Crown size={16} /> Upgrade
+                    </button>
+                    <div
+                        onClick={() => router.push('/profile')}
+                        style={{
+                            width: 40,
+                            height: 40,
+                            background: '#E5E7EB',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" color="#374151">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
                 </div>
             </header>
+
+            {/* Daily Summary - Evening Only */}
+            {isEvening && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={styles.dailySummary}
+                    style={{
+                        background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+                        color: 'white',
+                        padding: '1.25rem',
+                        borderRadius: '16px',
+                        marginBottom: '1.5rem',
+                        boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.5)'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <Clock size={20} color="white" />
+                        <h2 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>Today's Sales Breakdown</h2>
+                    </div>
+                    <div style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>₹{todaySales}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.9rem', opacity: 0.9 }}>
+                        <span>Cash: <b>₹{todayBreakdown.cash}</b></span>
+                        <span>|</span>
+                        <span>UPI: <b>₹{todayBreakdown.upi}</b></span>
+                        <span>|</span>
+                        <span>Credit: <b>₹{todayBreakdown.credit}</b> pending</span>
+                    </div>
+                </motion.div>
+            )}
+
+            {/* Nudges Section */}
+            <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {isEvening && todaySales === 0 && (
+                    <div style={{ padding: '12px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <AlertTriangle size={18} />
+                        <span>Inniku bill podala? (Billing not started today?)</span>
+                    </div>
+                )}
+
+                {lowStockCount > 0 && (
+                    <div style={{ padding: '12px', background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '8px', color: '#C2410C', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <AlertTriangle size={18} />
+                        <span>{lowStockCount} products low stock! Check Inventory.</span>
+                    </div>
+                )}
+
+                {topDebtor && (
+                    <div style={{ padding: '12px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: '8px', color: '#1E40AF', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => router.push('/credit')}>
+                        <Users size={18} />
+                        <span>{topDebtor.phone.replace(/(\d{5})(\d{5})/, '$1 $2')} – ₹{topDebtor.amount} due 🙏</span>
+                    </div>
+                )}
+            </div>
 
             <div className={styles.statsGrid}>
                 <motion.div

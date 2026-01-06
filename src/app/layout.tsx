@@ -3,10 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "MyBillzio - #1 Simple Billing App for Indian Small Business",
+    default: "MyBillzio – Simple Billing & Daily Business Control App",
     template: "%s | MyBillzio"
   },
-  description: "The easiest free billing, invoice, and Udhaar app for Indian shopkeepers. Create bills, track stock, and manage customer credit on mobile.",
+  description: "Easy billing, stock tracking & customer credit management for Indian small businesses. No app install. Works on mobile & laptop.",
   keywords: ["billing app", "invoice maker", "stock management", "udhaar khata", "dukandaar app", "gst billing", "small business india", "inventory app"],
   authors: [{ name: "MyBillzio Team" }],
   creator: "MyBillzio",
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: "https://mybillzio.vercel.app",
-    title: "MyBillzio - Free Mobile Billing App for Retail & Service",
-    description: "Create professional bills, manage inventory, and track credit (Udhaar) easily. Perfect for Kirana, Mobile Shops, and Service Centers.",
+    title: "MyBillzio – Simple Billing & Daily Business Control App",
+    description: "Easy billing, stock tracking & customer credit management for Indian small businesses. No app install. Works on mobile & laptop.",
     siteName: "MyBillzio",
     images: [{
       url: "/mybillzio-logo.png",
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyBillzio - #1 Billing App for India",
-    description: "Stop using paper. Switch to MyBillzio for fast billing and stock tracking.",
+    title: "MyBillzio – Simple Billing & Daily Business Control App",
+    description: "Easy billing, stock tracking & customer credit management for Indian small businesses. No app install. Works on mobile & laptop.",
     images: ["/mybillzio-logo.png"],
   },
   icons: {
