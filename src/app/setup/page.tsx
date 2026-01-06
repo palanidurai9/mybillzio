@@ -45,33 +45,43 @@ export default function SetupPage() {
         if (!productName || !price) return;
 
         try {
-            const user = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("User not authenticated");
+
             // Fetch shop ID
-            const { data: shop } = await supabase
+            const { data: shop, error: shopError } = await supabase
                 .from('shops')
                 .select('id')
-                .eq('owner_id', user.data.user?.id)
+                .eq('owner_id', user.id)
                 .single();
 
-            if (!shop) throw new Error("Shop not found");
+            if (shopError || !shop) {
+                console.error("Shop fetch error:", shopError);
+                throw new Error("Shop not found. Please try refreshing the page.");
+            }
+
+            const finalPrice = parseFloat(price);
+            if (isNaN(finalPrice)) throw new Error("Invalid price entered");
+
+            const finalStock = stock ? parseInt(stock) : 0;
 
             const { error } = await supabase
                 .from('products')
                 .insert({
                     shop_id: shop.id,
-                    owner_id: user.data.user?.id,
+                    owner_id: user.id,
                     name: productName,
-                    price: parseFloat(price),
-                    stock: parseInt(stock) || 0
+                    price: finalPrice,
+                    stock: finalStock
                 });
 
             if (error) throw error;
 
             router.push('/billing?onboarding=true');
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error creating product:", error);
-            alert('Failed to add product.');
+            alert(`Failed to add product: ${error.message || "Unknown error"}`);
         }
     };
 
