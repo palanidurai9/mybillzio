@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, X, Loader2 } from 'lucide-react';
+import { Check, X, Loader2, ArrowLeft } from 'lucide-react';
 import styles from './page.module.css';
 import { supabase } from '@/lib/supabase';
 import { loadRazorpay } from '@/lib/razorpay';
@@ -113,6 +113,13 @@ export default function PricingClient() {
 
     return (
         <div className={styles.container}>
+            <button
+                className={styles.backButton}
+                onClick={() => router.push('/dashboard')}
+                aria-label="Back to Dashboard"
+            >
+                <ArrowLeft size={24} />
+            </button>
             <div className={styles.header}>
                 <h1 className={styles.title}>Simple, Transparent Pricing</h1>
                 <p className={styles.subtitle}>

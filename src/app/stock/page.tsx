@@ -101,6 +101,12 @@ export default function StockPage() {
                 <h1 className={styles.title}>Stock Management Locked</h1>
                 <p style={{ color: '#6B7280', margin: '1rem 0' }}>Upgrade to Basic plan to manage inventory.</p>
                 <Button onClick={() => router.push('/pricing')}>View Plans</Button>
+                <button
+                    onClick={() => router.push('/dashboard')}
+                    style={{ marginTop: '1rem', background: 'transparent', border: 'none', color: '#6B7280', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                    Back to Dashboard
+                </button>
             </div>
         );
     }

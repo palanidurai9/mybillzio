@@ -183,3 +183,33 @@
         gap: 1.5rem;
     }
 }
+
+.backButton {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #4b5563;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.backButton:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+@media (max-width: 640px) {
+    .backButton {
+        top: 1rem;
+        left: 1rem;
+    }
+}
