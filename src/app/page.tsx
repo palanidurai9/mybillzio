@@ -36,6 +36,9 @@ export default function LandingPage() {
       </section>
 
       <section className={styles.features}>
+        <h2 style={{ width: '100%', textAlign: 'center', fontSize: '1.5rem', fontWeight: '700', marginBottom: '2rem', color: '#1f2937' }}>
+          Why Choose MyBillzio?
+        </h2>
         <div className={styles.featureCard}>
           <Zap className={styles.featureIcon} size={32} />
           <h3 className={styles.featureTitle}>Fast Billing</h3>
@@ -52,6 +55,30 @@ export default function LandingPage() {
           <p className={styles.featureText}>Know exactly who owes you money. Send reminders easily.</p>
         </div>
       </section>
-    </main>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "MyBillzio",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web, Android, iOS",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "INR"
+            },
+            "description": "The easiest billing and udhaar management app for Indian small businesses.",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "100"
+            }
+          })
+        }}
+      />
+    </main >
   );
 }
