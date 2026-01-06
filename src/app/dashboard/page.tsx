@@ -263,7 +263,7 @@ export default function DashboardPage() {
                 >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#F97316' }}>
                         <Users size={20} />
-                        <span className={styles.statLabel} style={{ marginBottom: 0, color: '#F97316' }}>Pending Credit</span>
+                        <span className={styles.statLabel} style={{ marginBottom: 0, color: '#F97316' }}>Pending Amount</span>
                     </div>
                     <span className={styles.statValue}>₹{pendingCredit}</span>
                 </motion.div>

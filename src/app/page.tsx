@@ -60,7 +60,7 @@ export default function LandingPage() {
           <div className={styles.card}>
             <div className={styles.iconBox}><CheckCircle2 size={24} /></div>
             <h3>No Confusion</h3>
-            <p>Bill, Stock, Udhaar (Credit) – see everything clearly in one place. No complex menus.</p>
+            <p>Bill, Stock, Pending Amount (Credit) – see everything clearly in one place. No complex menus.</p>
           </div>
           <div className={styles.card}>
             <div className={styles.iconBox}><Smartphone size={24} /></div>
@@ -88,7 +88,7 @@ export default function LandingPage() {
           <div className={styles.uniqueGrid}>
             <div className={styles.uniqueItem}>
               <h3>🔹 Not Accounting Software</h3>
-              <p>We are a <strong>Daily Business Control Tool</strong>. We don't complicate things with balance sheets. We focus on Cash, Stock, and Udhaar.</p>
+              <p>We are a <strong>Daily Business Control Tool</strong>. We don't complicate things with balance sheets. We focus on Cash, Stock, and Pending Amount.</p>
             </div>
 
             <div className={styles.uniqueItem}>
@@ -136,7 +136,7 @@ export default function LandingPage() {
               "price": "0",
               "priceCurrency": "INR"
             },
-            "description": "MyBillzio makes daily business simple, clear, and stress-free for small shops. Bill, Stock, Udhaar management.",
+            "description": "MyBillzio makes daily business simple, clear, and stress-free for small shops. Bill, Stock, Pending Amount management.",
             "aggregateRating": {
               "@type": "AggregateRating",
               "ratingValue": "4.9",

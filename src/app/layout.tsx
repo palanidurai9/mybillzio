@@ -6,8 +6,8 @@ export const metadata: Metadata = {
     default: "MyBillzio – Daily Business Control for Small Shops",
     template: "%s | MyBillzio"
   },
-  description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Udhaar in one place.",
-  keywords: ["daily business app", "billing software", "stock management", "small shop india", "kirana store app", "udhaar khata", "simple billing", "mobile billing app"],
+  description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Pending Amount in one place.",
+  keywords: ["daily business app", "billing software", "stock management", "small shop india", "kirana store app", "pending amount manager", "simple billing", "mobile billing app"],
   authors: [{ name: "MyBillzio Team" }],
   creator: "MyBillzio",
   publisher: "MyBillzio",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://mybillzio.vercel.app",
     title: "MyBillzio – Daily Business Control for Small Shops",
-    description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Udhaar in one place.",
+    description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Pending Amount in one place.",
     siteName: "MyBillzio",
     images: [{
       url: "/mybillzio-logo.png",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "MyBillzio – Daily Business Control for Small Shops",
-    description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Udhaar in one place.",
+    description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Pending Amount in one place.",
     images: ["/mybillzio-logo.png"],
   },
   icons: {

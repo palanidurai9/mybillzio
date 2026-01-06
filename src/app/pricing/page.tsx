@@ -62,7 +62,7 @@ export default function PricingPage() {
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Credit (Udhaar) Management
+                            Pending Amount (Credit) Management
                         </li>
                     </ul>
                     <Link href="/login?plan=basic" className={styles.ctaButton}>

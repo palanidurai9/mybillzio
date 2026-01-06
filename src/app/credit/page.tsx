@@ -100,7 +100,7 @@ export default function CreditPage() {
                 <button onClick={() => router.back()} className={styles.backBtn}>
                     <ArrowLeft size={20} />
                 </button>
-                <h1 className={styles.title}>Udhaar Manager</h1>
+                <h1 className={styles.title}>Pending Amount Manager</h1>
             </header>
 
             <motion.div

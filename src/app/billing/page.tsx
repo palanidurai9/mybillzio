@@ -364,7 +364,7 @@ function BillingContent() {
                                         )}
                                     >
                                         <span className={styles.label}>
-                                            {mode === 'credit' ? 'Udhaar (Credit)' : mode}
+                                            {mode === 'credit' ? 'Pending Amount (Credit)' : mode}
                                         </span>
                                         {paymentMode === mode && <CheckCircle size={20} color="#3B82F6" />}
                                     </div>
