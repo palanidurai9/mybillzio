@@ -1,0 +1,75 @@
+.container {
+    padding: var(--spacing-md);
+    min-height: 100vh;
+    background: var(--color-bg);
+}
+
+.header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.shopName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: hsl(var(--color-text-main));
+}
+
+.date {
+    color: hsl(var(--color-text-muted));
+    font-size: 0.875rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.statCard {
+    background: white;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.statLabel {
+    font-size: 0.875rem;
+    color: hsl(var(--color-text-muted));
+    margin-bottom: var(--spacing-xs);
+}
+
+.statValue {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: hsl(var(--color-text-main));
+}
+
+.lowStock {
+    color: hsl(var(--color-alert));
+}
+
+.createBillBtn {
+    background: hsl(var(--color-primary));
+    color: white;
+    width: 100%;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    font-size: 1.125rem;
+    font-weight: 600;
+    border: none;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.sectionTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}

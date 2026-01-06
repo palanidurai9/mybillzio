@@ -1,0 +1,114 @@
+.container {
+    padding: var(--spacing-md);
+    padding-bottom: 80px;
+    /* Space for footer/nav if any */
+    min-height: 100vh;
+    background: var(--color-bg);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.backBtn {
+    background: white;
+    border: 1px solid var(--color-border);
+    padding: 0.5rem;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--color-text-main));
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: hsl(var(--color-text-main));
+}
+
+.summaryCard {
+    background: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-primary-dark)));
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.totalLabel {
+    opacity: 0.9;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.totalValue {
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+.listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.customerCard {
+    background: white;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.customerInfo h3 {
+    font-weight: 600;
+    color: hsl(var(--color-text-main));
+    font-size: 1rem;
+}
+
+.customerInfo p {
+    color: hsl(var(--color-text-muted));
+    font-size: 0.875rem;
+}
+
+.actionArea {
+    text-align: right;
+}
+
+.dueAmount {
+    display: block;
+    font-weight: 700;
+    color: hsl(var(--color-alert));
+    margin-bottom: 0.5rem;
+}
+
+.whatsappBtn {
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: hsl(var(--color-text-muted));
+}

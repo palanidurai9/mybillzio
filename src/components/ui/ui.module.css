@@ -1,0 +1,66 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    border: none;
+    width: 100%;
+}
+
+.buttonPrimary {
+    background: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-primary-dark)));
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.buttonPrimary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+    opacity: 0.95;
+}
+
+.buttonSecondary {
+    background: white;
+    color: hsl(var(--color-primary));
+    border: 1px solid hsl(var(--color-primary));
+}
+
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+    width: 100%;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--color-text-main));
+}
+
+.input {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast);
+    outline: none;
+    width: 100%;
+}
+
+.input:focus {
+    border-color: hsl(var(--color-primary));
+    box-shadow: 0 0 0 2px rgba(85, 138, 242, 0.2);
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
