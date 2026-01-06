@@ -19,43 +19,72 @@ export default function SetupPage() {
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
 
+    const [isChecking, setIsChecking] = useState(true);
+
     // Protect route & Restore state
     useEffect(() => {
         const checkState = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                router.replace('/login');
-                return;
-            }
-
-            // Check if shop exists
-            const { data: shop } = await supabase
-                .from('shops')
-                .select('id, name, category')
-                .eq('owner_id', user.id)
-                .single();
-
-            if (shop) {
-                setShopId(shop.id);
-                setShopName(shop.name);
-                if (shop.category) setCategory(shop.category);
-
-                // Check if setup is already complete (has products)
-                const { count } = await supabase
-                    .from('products')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('shop_id', shop.id);
-
-                if (count && count > 0) {
-                    router.replace('/dashboard');
-                } else {
-                    // Shop exists, but no products -> Resume at Step 2
-                    setStep(2);
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    router.replace('/login');
+                    return;
                 }
+
+                // Check if shop exists
+                const { data: shop } = await supabase
+                    .from('shops')
+                    .select('id, name, category')
+                    .eq('owner_id', user.id)
+                    .single();
+
+                if (shop) {
+                    setShopId(shop.id);
+                    setShopName(shop.name);
+                    if (shop.category) setCategory(shop.category);
+
+                    // Check if setup is already complete (has products)
+                    const { count } = await supabase
+                        .from('products')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('shop_id', shop.id);
+
+                    if (count && count > 0) {
+                        router.replace('/dashboard');
+                        return;
+                    } else {
+                        // Shop exists, but no products -> Resume at Step 2
+                        setStep(2);
+                    }
+                }
+            } catch (error) {
+                console.error("Error checking state", error);
+            } finally {
+                setIsChecking(false);
             }
         };
         checkState();
     }, [router]);
+
+    if (isChecking) {
+        return (
+            <div className={styles.container}>
+                <div style={{
+                    width: '30px',
+                    height: '30px',
+                    border: '3px solid #e5e7eb',
+                    borderTopColor: '#3b82f6',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                }}></div>
+                <style jsx>{`
+                    @keyframes spin {
+                        to { transform: rotate(360deg); }
+                    }
+                `}</style>
+            </div>
+        );
+    }
 
     const handleShopSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,8 +1,10 @@
 .container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    min-height: 100dvh;
     padding: var(--spacing-md);
     background: hsl(var(--color-bg));
 }
@@ -11,10 +13,16 @@
     width: 100%;
     max-width: 400px;
     background: white;
-    padding: var(--spacing-xl);
+    padding: 1.5rem;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     text-align: center;
+}
+
+@media (min-width: 640px) {
+    .authCard {
+        padding: var(--spacing-xl);
+    }
 }
 
 .title {
@@ -26,7 +34,7 @@
 
 .subtitle {
     color: hsl(var(--color-text-muted));
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 1.5rem;
     font-size: 0.875rem;
 }
 

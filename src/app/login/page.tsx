@@ -14,22 +14,29 @@ export default function LoginPage() {
     const [step, setStep] = useState<'email' | 'check-email'>('email');
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        // If user is already logged in, redirect
         const checkUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: shop } = await supabase
-                    .from('shops')
-                    .select('id')
-                    .eq('owner_id', user.id)
-                    .single();
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: shop } = await supabase
+                        .from('shops')
+                        .select('id')
+                        .eq('owner_id', user.id)
+                        .single();
 
-                if (shop) router.push('/dashboard');
-                else router.push('/setup');
+                    if (shop) router.push('/dashboard');
+                    else router.push('/setup');
+                } else {
+                    setIsChecking(false);
+                }
+            } catch (error) {
+                console.error("Error checking session:", error);
+                setIsChecking(false);
             }
         };
         checkUser();
@@ -65,6 +72,14 @@ export default function LoginPage() {
             setIsLoading(false);
         }
     };
+
+    if (isChecking) {
+        return (
+            <div className={styles.container}>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
