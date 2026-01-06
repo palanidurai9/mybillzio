@@ -19,6 +19,8 @@ export default function CreditPage() {
     const [totalPending, setTotalPending] = useState(0);
     const [loading, setLoading] = useState(true);
 
+    const [shopName, setShopName] = useState('');
+
     useEffect(() => {
         const fetchCreditData = async () => {
             // 1. Auth & Shop Check
@@ -30,7 +32,7 @@ export default function CreditPage() {
 
             const { data: shop } = await supabase
                 .from('shops')
-                .select('id')
+                .select('id, name')
                 .eq('owner_id', user.id)
                 .single();
 
@@ -38,6 +40,8 @@ export default function CreditPage() {
                 router.replace('/setup');
                 return;
             }
+
+            setShopName(shop.name);
 
             // 2. Fetch Credit Bills
             const { data: bills } = await supabase
@@ -86,7 +90,7 @@ export default function CreditPage() {
     }
 
     const sendReminder = (customer: string, amount: number) => {
-        const text = `Hello! A gentle reminder to pay the pending amount of ₹${amount} at MyBillzio Shop. Thank you!`;
+        const text = `Hello! A gentle reminder to pay the pending amount of ₹${amount} at ${shopName || 'our shop'}. Thank you!`;
         window.open(`https://wa.me/${customer}?text=${encodeURIComponent(text)}`, '_blank');
     };
 
