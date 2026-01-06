@@ -266,7 +266,10 @@ export default function DashboardPage() {
                 )}
 
                 {stockEnabled && lowStockCount > 0 && (
-                    <div style={{ padding: '12px', background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '8px', color: '#C2410C', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                        style={{ padding: '12px', background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '8px', color: '#C2410C', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                        onClick={() => router.push('/stock')}
+                    >
                         <AlertTriangle size={18} />
                         <span>{lowStockCount} products low stock! Check Inventory.</span>
                     </div>
@@ -318,6 +321,9 @@ export default function DashboardPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
+                        onClick={() => router.push('/stock')}
+                        whileHover={{ scale: 1.02 }}
+                        style={{ cursor: 'pointer' }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#EF4444' }}>
                             <AlertTriangle size={20} />

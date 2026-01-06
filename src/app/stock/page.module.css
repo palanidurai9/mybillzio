@@ -1,0 +1,152 @@
+.container {
+    padding: 1rem;
+    padding-bottom: 80px;
+    /* Space for navbar */
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background-color: #F9FAFB;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1F2937;
+}
+
+.addButton {
+    background: #2563EB;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.searchData {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.productCard {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #E5E7EB;
+}
+
+.productInfo h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    color: #111827;
+}
+
+.productMeta {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.stockControl {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.stockBadge {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.inStock {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.lowStock {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.outStock {
+    background: #FECACA;
+    color: #991B1B;
+}
+
+/* Modal */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;
+    /* Bottom sheet on mobile */
+}
+
+@media (min-width: 640px) {
+    .modalOverlay {
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.modalContent {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    padding: 1.5rem;
+    border-radius: 16px 16px 0 0;
+    animation: slideUp 0.3s ease-out;
+}
+
+@media (min-width: 640px) {
+    .modalContent {
+        border-radius: 12px;
+        animation: fadeIn 0.3s ease-out;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
