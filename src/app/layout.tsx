@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "MyBillzio – Simple Billing & Daily Business Control App",
+    default: "MyBillzio – Daily Business Control for Small Shops",
     template: "%s | MyBillzio"
   },
-  description: "Easy billing, stock tracking & customer credit management for Indian small businesses. No app install. Works on mobile & laptop.",
-  keywords: ["billing app", "invoice maker", "stock management", "udhaar khata", "dukandaar app", "gst billing", "small business india", "inventory app"],
+  description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Udhaar in one place.",
+  keywords: ["daily business app", "billing software", "stock management", "small shop india", "kirana store app", "udhaar khata", "simple billing", "mobile billing app"],
   authors: [{ name: "MyBillzio Team" }],
   creator: "MyBillzio",
   publisher: "MyBillzio",
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: "https://mybillzio.vercel.app",
-    title: "MyBillzio – Simple Billing & Daily Business Control App",
-    description: "Easy billing, stock tracking & customer credit management for Indian small businesses. No app install. Works on mobile & laptop.",
+    title: "MyBillzio – Daily Business Control for Small Shops",
+    description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Udhaar in one place.",
     siteName: "MyBillzio",
     images: [{
       url: "/mybillzio-logo.png",
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyBillzio – Simple Billing & Daily Business Control App",
-    description: "Easy billing, stock tracking & customer credit management for Indian small businesses. No app install. Works on mobile & laptop.",
+    title: "MyBillzio – Daily Business Control for Small Shops",
+    description: "MyBillzio makes daily business simple, clear, and stress-free for small shops. No complex accounting. Bill, Stock, and Udhaar in one place.",
     images: ["/mybillzio-logo.png"],
   },
   icons: {

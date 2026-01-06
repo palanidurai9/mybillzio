@@ -261,7 +261,10 @@ function BillingContent() {
                 <div style={{ position: 'relative', flex: 1 }}>
                     <Search size={20} style={{ position: 'absolute', left: 12, top: 12, color: '#9CA3AF' }} />
                     <input
-                        type="text"
+                        autoFocus
+                        type="search"
+                        inputMode="search"
+                        enterKeyHint="search"
                         placeholder="Search products..."
                         className={styles.searchBar}
                         style={{ paddingLeft: '2.5rem' }}

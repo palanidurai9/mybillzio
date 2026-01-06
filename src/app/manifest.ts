@@ -2,11 +2,12 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'MyBillzio',
+        name: 'MyBillzio - Daily Business Control',
         short_name: 'MyBillzio',
-        description: 'Simple Billing & Udhaar App for Indian Business',
+        description: 'Simple, Clear, Stress-free Business Control for Small Shops',
         start_url: '/',
         display: 'standalone',
+        orientation: 'portrait',
         background_color: '#ffffff',
         theme_color: '#558AF2',
         icons: [
