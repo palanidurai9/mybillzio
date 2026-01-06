@@ -78,6 +78,10 @@ export default function SetupPage() {
 
     return (
         <div className={styles.container}>
+            <p style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.875rem', fontWeight: 500 }}>
+                Step {step} of 3 {step === 2 ? '– Add Product' : ''}
+            </p>
+
             <div className={styles.authCard}>
 
                 {/* Step Indicator */}
@@ -92,19 +96,24 @@ export default function SetupPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4 }}
                     >
-                        <h1 className={styles.title}>Setup your Shop</h1>
-                        <p className={styles.subtitle}>Tell us about your business</p>
+                        <h1 className={styles.title}>Set up your shop in 30 seconds</h1>
+                        <p className={styles.subtitle}>We’ll personalise MyBillzio for your business</p>
                         <form onSubmit={handleShopSubmit} className={styles.form}>
-                            <Input
-                                label="Shop Name"
-                                placeholder="e.g. Siva Mobiles"
-                                value={shopName}
-                                onChange={(e) => setShopName(e.target.value)}
-                                required
-                            />
+                            <div>
+                                <Input
+                                    label="Shop Name"
+                                    placeholder="e.g. Siva Mobiles"
+                                    value={shopName}
+                                    onChange={(e) => setShopName(e.target.value)}
+                                    required
+                                />
+                                <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                                    This name will appear on bills sent to customers
+                                </p>
+                            </div>
 
                             <div>
-                                <label className={styles.label}>Business Type</label>
+                                <label className={styles.label}>What kind of shop is this?</label>
                                 <div className={styles.selectWrapper}>
                                     <select
                                         className={styles.select}
@@ -112,19 +121,19 @@ export default function SetupPage() {
                                         onChange={(e) => setCategory(e.target.value)}
                                     >
                                         <option value="retail">Kirana / Retail (General Store)</option>
-                                        <option value="mobile">Mobile / Electronics / Accessories</option>
-                                        <option value="hardware">Hardware / Electricals / Paint</option>
-                                        <option value="medical">Medical / Pharmacy</option>
+                                        <option value="mobile">Mobile / Electronics Shop</option>
+                                        <option value="hardware">Hardware / Electrical / Paint</option>
                                         <option value="clothing">Textile / Clothing / Tailoring</option>
                                         <option value="restaurant">Restaurant / Cafe / Bakery</option>
-                                        <option value="service">Service Center / Repair Shop</option>
+                                        <option value="medical">Medical / Pharmacy</option>
+                                        <option value="service">Service / Repair Shop</option>
                                         <option value="wholesaler">Wholesaler / Distributor</option>
                                         <option value="other">Other Business</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <Button type="submit">Continue</Button>
+                            <Button type="submit">Continue → Add First Product</Button>
                         </form>
                     </motion.div>
                 )}
