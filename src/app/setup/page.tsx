@@ -11,6 +11,7 @@ import { supabase, createShop } from '@/lib/supabase';
 export default function SetupPage() {
     const router = useRouter();
     const [step, setStep] = useState(1);
+    const [shopId, setShopId] = useState<string | null>(null);
     const [shopName, setShopName] = useState('');
     const [category, setCategory] = useState('retail');
     // First product details
@@ -18,13 +19,42 @@ export default function SetupPage() {
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
 
-    // Protect route with Supabase
+    // Protect route & Restore state
     useEffect(() => {
-        const checkUser = async () => {
-            const user = await supabase.auth.getUser();
-            if (!user.data.user) router.replace('/login');
+        const checkState = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.replace('/login');
+                return;
+            }
+
+            // Check if shop exists
+            const { data: shop } = await supabase
+                .from('shops')
+                .select('id, name, category')
+                .eq('owner_id', user.id)
+                .single();
+
+            if (shop) {
+                setShopId(shop.id);
+                setShopName(shop.name);
+                if (shop.category) setCategory(shop.category);
+
+                // Check if setup is already complete (has products)
+                const { count } = await supabase
+                    .from('products')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('shop_id', shop.id);
+
+                if (count && count > 0) {
+                    router.replace('/dashboard');
+                } else {
+                    // Shop exists, but no products -> Resume at Step 2
+                    setStep(2);
+                }
+            }
         };
-        checkUser();
+        checkState();
     }, [router]);
 
     const handleShopSubmit = async (e: React.FormEvent) => {
@@ -32,8 +62,11 @@ export default function SetupPage() {
         if (!shopName) return;
 
         try {
-            await createShop(shopName, category);
-            setStep(2);
+            const newShop = await createShop(shopName, category);
+            if (newShop) {
+                setShopId(newShop.id);
+                setStep(2);
+            }
         } catch (error) {
             console.error('Error creating shop:', error);
             alert('Failed to create shop. Please try again.');
@@ -48,16 +81,20 @@ export default function SetupPage() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("User not authenticated");
 
-            // Fetch shop ID
-            const { data: shop, error: shopError } = await supabase
-                .from('shops')
-                .select('id')
-                .eq('owner_id', user.id)
-                .single();
+            let targetShopId = shopId;
 
-            if (shopError || !shop) {
-                console.error("Shop fetch error:", shopError);
-                throw new Error("Shop not found. Please try refreshing the page.");
+            // Fallback: If for some reason state is lost, fetch again
+            if (!targetShopId) {
+                const { data: shop, error: shopError } = await supabase
+                    .from('shops')
+                    .select('id')
+                    .eq('owner_id', user.id)
+                    .single();
+
+                if (shopError || !shop) {
+                    throw new Error("Shop not found. Please try refreshing the page.");
+                }
+                targetShopId = shop.id;
             }
 
             const finalPrice = parseFloat(price);
@@ -68,7 +105,7 @@ export default function SetupPage() {
             const { error } = await supabase
                 .from('products')
                 .insert({
-                    shop_id: shop.id,
+                    shop_id: targetShopId,
                     owner_id: user.id,
                     name: productName,
                     price: finalPrice,
