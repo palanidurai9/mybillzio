@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import { Input } from '@/components/ui/Input';
 import { supabase } from '@/lib/supabase';
+import { getPlanConfig } from '@/lib/plans';
 
 // Types
 interface Product {
@@ -48,6 +49,12 @@ function BillingContent() {
     const [newProductStock, setNewProductStock] = useState('');
     const [isAddingProduct, setIsAddingProduct] = useState(false);
 
+    // Plan Limits
+    const [isLimitReached, setIsLimitReached] = useState(false);
+    const [currentUsage, setCurrentUsage] = useState(0);
+    const [planLimit, setPlanLimit] = useState<number | 'UNLIMITED'>('UNLIMITED');
+    const [featureFlags, setFeatureFlags] = useState<any>(null);
+
     const handleAddNewProduct = async () => {
         if (!newProductName || !newProductPrice) return;
         setIsAddingProduct(true);
@@ -79,7 +86,7 @@ function BillingContent() {
         }
     };
 
-    // Load products from Supabase
+    // Load products from Supabase and Check Limits
     useEffect(() => {
         const fetchScanData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -101,7 +108,28 @@ function BillingContent() {
             }
             setShop(shop);
 
-            const { data: products, error } = await supabase
+            // CHECK PLAN LIMITS
+            const planConfig = getPlanConfig(shop.subscription_plan);
+            setPlanLimit(planConfig.billing_limit);
+            setFeatureFlags(planConfig);
+
+            if (planConfig.billing_limit !== 'UNLIMITED') {
+                const now = new Date();
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+                const { count } = await supabase
+                    .from('bills')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('shop_id', shop.id)
+                    .gte('created_at', firstDay);
+
+                setCurrentUsage(count || 0);
+                if (count && count >= planConfig.billing_limit) {
+                    setIsLimitReached(true);
+                }
+            }
+
+            const { data: products } = await supabase
                 .from('products')
                 .select('*')
                 .eq('shop_id', shop.id)
@@ -141,6 +169,10 @@ function BillingContent() {
 
     const handleGenerateBill = async () => {
         if (!shop || !user) return;
+        if (isLimitReached) {
+            alert("Monthly billing limit reached. Please upgrade.");
+            return;
+        }
 
         try {
             // 1. Create the Bill
@@ -170,7 +202,7 @@ function BillingContent() {
                 }
             }));
 
-            // 3. Refresh Products List
+            // 3. Refresh Products List & Re-check Limit (Optimistic update possible but safer to fetch if close to limit)
             const { data: updatedProducts } = await supabase
                 .from('products')
                 .select('*')
@@ -178,6 +210,13 @@ function BillingContent() {
                 .order('created_at', { ascending: false });
 
             if (updatedProducts) setProducts(updatedProducts);
+
+            // Update limit count locally to avoid re-fetch if we want
+            if (planLimit !== 'UNLIMITED') {
+                const newUsage = currentUsage + 1;
+                setCurrentUsage(newUsage);
+                if (newUsage >= planLimit) setIsLimitReached(true);
+            }
 
             setShowPayment(false);
             setShowSuccess(true);
@@ -216,9 +255,11 @@ function BillingContent() {
                     <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Bill Generated!</h1>
                     <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>Total: ₹{cartTotal}</p>
 
-                    <button onClick={shareOnWhatsapp} className={styles.whatsappBtn}>
-                        <Share2 size={20} /> Share on WhatsApp
-                    </button>
+                    {featureFlags?.whatsapp_customer_bill && (
+                        <button onClick={shareOnWhatsapp} className={styles.whatsappBtn}>
+                            <Share2 size={20} /> Share on WhatsApp
+                        </button>
+                    )}
 
                     <button onClick={finish} className={styles.primaryBtn}>
                         {isOnboarding ? 'Go to Dashboard' : 'New Bill'}
@@ -230,6 +271,11 @@ function BillingContent() {
 
     return (
         <div className={styles.container}>
+            {isLimitReached && (
+                <div style={{ background: '#FECACA', color: '#991B1B', padding: '0.75rem', textAlign: 'center', fontSize: '0.9rem', fontWeight: 600 }}>
+                    ⚠️ Limit reached ({currentUsage}/{planLimit}). <span onClick={() => router.push('/pricing')} style={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: '4px' }}>Upgrade to Basic</span>
+                </div>
+            )}
             <header className={styles.header}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <button onClick={() => router.push('/dashboard')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
@@ -330,8 +376,12 @@ function BillingContent() {
                             <span className={styles.totalLabel}>{cartCount} Items</span>
                             <span className={styles.totalAmount}>₹{cartTotal}</span>
                         </div>
-                        <button className={styles.checkoutBtn} onClick={() => setShowPayment(true)}>
-                            Proceed to Pay
+                        <button
+                            className={styles.checkoutBtn}
+                            onClick={isLimitReached ? () => router.push('/pricing') : () => setShowPayment(true)}
+                            style={{ opacity: isLimitReached ? 0.7 : 1, background: isLimitReached ? '#6B7280' : '#2563EB' }}
+                        >
+                            {isLimitReached ? 'Upgrade to Pay' : 'Proceed to Pay'}
                         </button>
                     </motion.div>
                 )}

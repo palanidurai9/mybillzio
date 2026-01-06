@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import styles from './page.module.css';
 import type { Metadata } from 'next';
 
@@ -21,22 +21,27 @@ export default function PricingPage() {
             <div className={styles.grid}>
                 {/* Free Plan */}
                 <div className={styles.card}>
-                    <h2 className={styles.planName}>Free</h2>
+                    <h2 className={styles.planName}>Free (Trial)</h2>
                     <div className={styles.price}>
                         ₹0 <span className={styles.period}>/ forever</span>
                     </div>
+                    <p style={{ marginBottom: '1rem', color: '#6B7280', fontSize: '0.9rem' }}>Perfect for trying out the app.</p>
                     <ul className={styles.features}>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Try MyBillzio
+                            Create 20 Bills / Month
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Everyday billing
+                            Pending Amount Management
                         </li>
-                        <li className={styles.feature}>
-                            <Check size={20} className={styles.checkIcon} />
-                            Manage customers
+                        <li className={`${styles.feature} ${styles.disabled}`}>
+                            <X size={20} className={styles.xIcon} />
+                            Stock Management
+                        </li>
+                        <li className={`${styles.feature} ${styles.disabled}`}>
+                            <X size={20} className={styles.xIcon} />
+                            WhatsApp Summary
                         </li>
                     </ul>
                     <Link href="/login" className={styles.ctaButtonOutline}>
@@ -49,20 +54,25 @@ export default function PricingPage() {
                     <div className={styles.popularBadge}>POPULAR</div>
                     <h2 className={styles.planName}>Basic</h2>
                     <div className={styles.price}>
-                        ₹299 <span className={styles.period}>/ year</span>
+                        ₹299 <span className={styles.period}>/ month</span>
                     </div>
+                    <p style={{ marginBottom: '1rem', color: '#6B7280', fontSize: '0.9rem' }}>Full daily usage for most shops.</p>
                     <ul className={styles.features}>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Unlimited billing
+                            <strong>Unlimited Billing</strong>
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Complete Stock Management
+                            Stock Management
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Pending Amount (Credit) Management
+                            WhatsApp Share (Bills & Summary)
+                        </li>
+                        <li className={styles.feature}>
+                            <Check size={20} className={styles.checkIcon} />
+                            PDF & Excel Exports
                         </li>
                     </ul>
                     <Link href="/login?plan=basic" className={styles.ctaButton}>
@@ -74,8 +84,9 @@ export default function PricingPage() {
                 <div className={styles.card}>
                     <h2 className={styles.planName}>Pro</h2>
                     <div className={styles.price}>
-                        ₹499 <span className={styles.period}>/ year</span>
+                        ₹499 <span className={styles.period}>/ month</span>
                     </div>
+                    <p style={{ marginBottom: '1rem', color: '#6B7280', fontSize: '0.9rem' }}>For power users & GST shops.</p>
                     <ul className={styles.features}>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
@@ -83,44 +94,19 @@ export default function PricingPage() {
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            Advanced Reports
+                            GST Summaries
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            GST Summary
+                            Advanced Date Analytics
                         </li>
                         <li className={styles.feature}>
                             <Check size={20} className={styles.checkIcon} />
-                            PDF & Excel Exports
+                            Priority Support
                         </li>
                     </ul>
                     <Link href="/login?plan=pro" className={styles.ctaButtonOutline}>
                         Upgrade to Pro
-                    </Link>
-                </div>
-
-                {/* Enterprise Plan */}
-                <div className={styles.card}>
-                    <h2 className={styles.planName}>Enterprise</h2>
-                    <div className={styles.price}>
-                        Custom
-                    </div>
-                    <ul className={styles.features}>
-                        <li className={styles.feature}>
-                            <Check size={20} className={styles.checkIcon} />
-                            Dedicated Support
-                        </li>
-                        <li className={styles.feature}>
-                            <Check size={20} className={styles.checkIcon} />
-                            Custom Features
-                        </li>
-                        <li className={styles.feature}>
-                            <Check size={20} className={styles.checkIcon} />
-                            Multi-shop Management
-                        </li>
-                    </ul>
-                    <Link href="mailto:support@mybillzio.com" className={styles.ctaButtonOutline}>
-                        Contact Us
                     </Link>
                 </div>
             </div>

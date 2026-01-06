@@ -6,6 +6,7 @@ import { Plus, TrendingUp, AlertTriangle, Users, Clock, Crown } from 'lucide-rea
 import styles from './page.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { getPlanConfig } from '@/lib/plans';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -20,6 +21,7 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [isEvening, setIsEvening] = useState(false);
     const [greeting, setGreeting] = useState('');
+    const [stockEnabled, setStockEnabled] = useState(true);
 
     useEffect(() => {
         // Time logic
@@ -52,6 +54,9 @@ export default function DashboardPage() {
 
                 setShopName(shop.name);
                 setShopCategory(shop.category || 'retail');
+
+                const planConfig = getPlanConfig(shop.subscription_plan);
+                setStockEnabled(planConfig.stock_enabled);
 
                 // 2. Fetch Today's Sales with Breakdown (Resets Daily)
                 const today = new Date();
@@ -114,14 +119,15 @@ export default function DashboardPage() {
                     }
                 }
 
-                // 4. Fetch Low Stock Count
-                const { count } = await supabase
-                    .from('products')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('shop_id', shop.id)
-                    .lt('stock', 10);
-
-                setLowStockCount(count || 0);
+                // 4. Fetch Low Stock Count (Only if enabled)
+                if (planConfig.stock_enabled) {
+                    const { count } = await supabase
+                        .from('products')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('shop_id', shop.id)
+                        .lt('stock', 10);
+                    setLowStockCount(count || 0);
+                }
 
             } catch (error) {
                 console.error("Error fetching dashboard:", error);
@@ -259,7 +265,7 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                {lowStockCount > 0 && (
+                {stockEnabled && lowStockCount > 0 && (
                     <div style={{ padding: '12px', background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: '8px', color: '#C2410C', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <AlertTriangle size={18} />
                         <span>{lowStockCount} products low stock! Check Inventory.</span>
@@ -306,7 +312,7 @@ export default function DashboardPage() {
                     <span className={styles.statValue}>₹{pendingCredit}</span>
                 </motion.div>
 
-                {shopCategory !== 'service' && (
+                {stockEnabled && shopCategory !== 'service' && (
                     <motion.div
                         className={styles.statCard}
                         initial={{ opacity: 0, y: 20 }}

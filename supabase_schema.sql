@@ -20,6 +20,9 @@ create table shops (
   owner_id uuid references auth.users on delete cascade not null,
   name text not null,
   category text,
+  subscription_plan text default 'FREE',
+  subscription_status text default 'active', -- active, past_due, canceled
+  subscription_expiry timestamp with time zone,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
