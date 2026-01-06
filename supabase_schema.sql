@@ -17,7 +17,7 @@ create policy "Users can update own profile" on profiles for update using (auth.
 -- 2. Create Shops Table
 create table shops (
   id uuid default gen_random_uuid() primary key,
-  owner_id uuid references auth.users not null,
+  owner_id uuid references auth.users on delete cascade not null,
   name text not null,
   category text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -33,7 +33,7 @@ create policy "Users can update own shop" on shops for update using (auth.uid() 
 create table products (
   id uuid default gen_random_uuid() primary key,
   shop_id uuid references shops on delete cascade not null,
-  owner_id uuid references auth.users not null,
+  owner_id uuid references auth.users on delete cascade not null,
   name text not null,
   price numeric not null check (price >= 0),
   stock integer default 0,
@@ -47,7 +47,7 @@ create policy "Users can manage own products" on products for all using (auth.ui
 create table bills (
   id uuid default gen_random_uuid() primary key,
   shop_id uuid references shops on delete cascade not null,
-  owner_id uuid references auth.users not null,
+  owner_id uuid references auth.users on delete cascade not null,
   customer_phone text,
   total_amount numeric not null,
   payment_mode text check (payment_mode in ('cash', 'upi', 'credit')),
